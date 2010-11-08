@@ -1,8 +1,8 @@
 ﻿using System.Text;
 
-namespace FreeSwitchUtilities.Irv
+namespace FreeSwitchUtilities.Extensions
 {
-    public static class Extensions
+    public static class IvrExtensions
     {
         public static bool IsInteger(this string toParse)
         {

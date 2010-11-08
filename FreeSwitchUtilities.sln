@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FreeSwitchUtilities", "src\FreeSwitchUtilities\FreeSwitchUtilities.csproj", "{814D8764-8BE0-4A9C-865C-B7FBC001AA4F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FreeSwitchUtilities.Samples", "src\FreeSwitchUtilities.Samples\FreeSwitchUtilities.Samples.csproj", "{8AB7F668-6C4E-491E-B199-02F5F4FF60E6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -13,6 +15,10 @@ Global
 		{814D8764-8BE0-4A9C-865C-B7FBC001AA4F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{814D8764-8BE0-4A9C-865C-B7FBC001AA4F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{814D8764-8BE0-4A9C-865C-B7FBC001AA4F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8AB7F668-6C4E-491E-B199-02F5F4FF60E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8AB7F668-6C4E-491E-B199-02F5F4FF60E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8AB7F668-6C4E-491E-B199-02F5F4FF60E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8AB7F668-6C4E-491E-B199-02F5F4FF60E6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

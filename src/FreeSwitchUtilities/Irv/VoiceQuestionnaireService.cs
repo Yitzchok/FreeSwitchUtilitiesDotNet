@@ -6,11 +6,37 @@ namespace FreeSwitchUtilities.Irv
 {
     public class VoiceQuestionnaireService
     {
+        /// <summary>
+        /// Gets or sets the session.
+        /// </summary>
+        /// <value>The session.</value>
         public ManagedSession Session { get; set; }
+
+        /// <summary>
+        /// Gets or sets the invalid audio file.
+        /// </summary>
+        /// <value>The invalid audio file.</value>
         public string InvalidAudioFile { get; set; }
+
+        /// <summary>
+        /// Gets or sets the phrase start.
+        /// </summary>
+        /// <value>The phrase start.</value>
         public string PhraseStart { get; set; }
+
+        /// <summary>
+        /// Gets or sets the recording folder.
+        /// </summary>
+        /// <value>The recording folder.</value>
         public string RecordingFolder { get; set; }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="VoiceQuestionnaireService"/> class.
+        /// </summary>
+        /// <param name="session">The session.</param>
+        /// <param name="invalidAudioFile">The invalid audio file.</param>
+        /// <param name="phraseStart">The phrase start.</param>
+        /// <param name="recordingFolder">The recording folder.</param>
         public VoiceQuestionnaireService(ManagedSession session,
             string invalidAudioFile, string phraseStart, string recordingFolder)
         {
@@ -20,6 +46,19 @@ namespace FreeSwitchUtilities.Irv
             RecordingFolder = recordingFolder;
         }
 
+        /// <summary>
+        /// Asks the and verify question.
+        /// </summary>
+        /// <param name="minDigits">The min digits.</param>
+        /// <param name="maxDigits">The max digits.</param>
+        /// <param name="tries">The tries.</param>
+        /// <param name="timeout">The timeout.</param>
+        /// <param name="terminators">The terminators.</param>
+        /// <param name="question">The question.</param>
+        /// <param name="isCorrectQuestion">The is correct question.</param>
+        /// <param name="regexPattern">The regex pattern.</param>
+        /// <param name="isValid">The is valid.</param>
+        /// <returns></returns>
         public string AskAndVerifyQuestion(int minDigits, int maxDigits, int tries, int timeout, string terminators,
                                            string question, Func<string, string> isCorrectQuestion, string regexPattern,
                                            Func<string, bool> isValid)
@@ -29,6 +68,20 @@ namespace FreeSwitchUtilities.Irv
         }
 
 
+        /// <summary>
+        /// Asks the and verify question.
+        /// </summary>
+        /// <param name="minDigits">The min digits.</param>
+        /// <param name="maxDigits">The max digits.</param>
+        /// <param name="tries">The tries.</param>
+        /// <param name="timeout">The timeout.</param>
+        /// <param name="terminators">The terminators.</param>
+        /// <param name="question">The question.</param>
+        /// <param name="invalidInput">The invalid input.</param>
+        /// <param name="isCorrectQuestion">The is correct question.</param>
+        /// <param name="regexPattern">The regex pattern.</param>
+        /// <param name="isValid">The is valid.</param>
+        /// <returns></returns>
         public string AskAndVerifyQuestion(int minDigits, int maxDigits, int tries, int timeout, string terminators,
                                            string question, string invalidInput, Func<string, string> isCorrectQuestion, string regexPattern,
                                            Func<string, bool> isValid)
@@ -61,6 +114,13 @@ namespace FreeSwitchUtilities.Irv
             return result;
         }
 
+        /// <summary>
+        /// Asks to verify answer.
+        /// </summary>
+        /// <param name="invalidInput">The invalid input.</param>
+        /// <param name="result">The result.</param>
+        /// <param name="isCorrectQuestion">The is correct question.</param>
+        /// <returns></returns>
         private bool AskToVerifyAnswer(string invalidInput, string result, Func<string, string> isCorrectQuestion)
         {
             CheckSessionReady();
@@ -70,6 +130,17 @@ namespace FreeSwitchUtilities.Irv
 
         }
 
+        /// <summary>
+        /// Asks the and verify question.
+        /// </summary>
+        /// <param name="minDigits">The min digits.</param>
+        /// <param name="maxDigits">The max digits.</param>
+        /// <param name="tries">The tries.</param>
+        /// <param name="timeout">The timeout.</param>
+        /// <param name="terminators">The terminators.</param>
+        /// <param name="question">The question.</param>
+        /// <param name="regexPattern">The regex pattern.</param>
+        /// <returns></returns>
         public string AskAndVerifyQuestion(int minDigits, int maxDigits, int tries, int timeout, string terminators,
                                            string question, string regexPattern)
         {
@@ -77,6 +148,18 @@ namespace FreeSwitchUtilities.Irv
                                         regexPattern);
         }
 
+        /// <summary>
+        /// Asks the and verify question.
+        /// </summary>
+        /// <param name="minDigits">The min digits.</param>
+        /// <param name="maxDigits">The max digits.</param>
+        /// <param name="tries">The tries.</param>
+        /// <param name="timeout">The timeout.</param>
+        /// <param name="terminators">The terminators.</param>
+        /// <param name="question">The question.</param>
+        /// <param name="invalidInput">The invalid input.</param>
+        /// <param name="regexPattern">The regex pattern.</param>
+        /// <returns></returns>
         public string AskAndVerifyQuestion(int minDigits, int maxDigits, int tries, int timeout, string terminators,
                                            string question, string invalidInput, string regexPattern)
         {
@@ -88,6 +171,18 @@ namespace FreeSwitchUtilities.Irv
             return result;
         }
 
+        /// <summary>
+        /// Plays the and get digits.
+        /// </summary>
+        /// <param name="minDigits">The min digits.</param>
+        /// <param name="maxDigits">The max digits.</param>
+        /// <param name="tries">The tries.</param>
+        /// <param name="timeout">The timeout.</param>
+        /// <param name="terminators">The terminators.</param>
+        /// <param name="audioFile">The audio file.</param>
+        /// <param name="badInputAudioFile">The bad input audio file.</param>
+        /// <param name="regexPattern">The regex pattern.</param>
+        /// <returns></returns>
         public string PlayAndGetDigits(int minDigits, int maxDigits, int tries, int timeout, string terminators,
                                        string audioFile, string badInputAudioFile, string regexPattern)
         {
@@ -98,31 +193,72 @@ namespace FreeSwitchUtilities.Irv
                                             badInputAudioFile, regexPattern, String.Empty, 5000);
         }
 
+        /// <summary>
+        /// Checks if session ready.
+        /// </summary>
+        /// <returns></returns>
         private bool CheckIfSessionReady()
         {
             return Session.Ready();
         }
 
+        /// <summary>
+        /// Checks the session ready.
+        /// </summary>
         private void CheckSessionReady()
         {
             if (!Session.Ready()) throw new Exception();
         }
 
+        /// <summary>
+        /// Asks the record and verify question.
+        /// </summary>
+        /// <param name="question">The question.</param>
+        /// <param name="isCorrectQuestion">The is correct question.</param>
+        /// <param name="recordFileName">Name of the record file.</param>
+        /// <returns></returns>
         public string AskRecordAndVerifyQuestion(string question, Func<string, string> isCorrectQuestion, string recordFileName)
         {
             return AskRecordAndVerifyQuestion(question, isCorrectQuestion, recordFileName, 60);
         }
 
+        /// <summary>
+        /// Asks the record and verify question.
+        /// </summary>
+        /// <param name="question">The question.</param>
+        /// <param name="isCorrectQuestion">The is correct question.</param>
+        /// <param name="recordFileName">Name of the record file.</param>
+        /// <param name="timeLimit">The time limit.</param>
+        /// <returns></returns>
         public string AskRecordAndVerifyQuestion(string question, Func<string, string> isCorrectQuestion, string recordFileName, int timeLimit)
         {
             return AskRecordAndVerifyQuestion(question, isCorrectQuestion, recordFileName, timeLimit, 2);
         }
 
+        /// <summary>
+        /// Asks the record and verify question.
+        /// </summary>
+        /// <param name="question">The question.</param>
+        /// <param name="isCorrectQuestion">The is correct question.</param>
+        /// <param name="recordFileName">Name of the record file.</param>
+        /// <param name="timeLimit">The time limit.</param>
+        /// <param name="silenceHits">The silence hits.</param>
+        /// <returns></returns>
         public string AskRecordAndVerifyQuestion(string question, Func<string, string> isCorrectQuestion, string recordFileName, int timeLimit, int silenceHits)
         {
             return AskRecordAndVerifyQuestion(question, isCorrectQuestion, recordFileName, timeLimit, 500, silenceHits);
         }
 
+        /// <summary>
+        /// Asks the record and verify question.
+        /// </summary>
+        /// <param name="question">The question.</param>
+        /// <param name="isCorrectQuestion">The is correct question.</param>
+        /// <param name="recordFileName">Name of the record file.</param>
+        /// <param name="timeLimit">The time limit.</param>
+        /// <param name="silenceThreshold">The silence threshold.</param>
+        /// <param name="silenceHits">The silence hits.</param>
+        /// <returns></returns>
         public string AskRecordAndVerifyQuestion(string question, Func<string, string> isCorrectQuestion,
             string recordFileName, int timeLimit, int silenceThreshold, int silenceHits)
         {
@@ -145,6 +281,13 @@ namespace FreeSwitchUtilities.Irv
             return fileNameCombined;
         }
 
+        /// <summary>
+        /// Records to file.
+        /// </summary>
+        /// <param name="fileName">Name of the file.</param>
+        /// <param name="timeLimit">The time limit.</param>
+        /// <param name="silenceThreshold">The silence threshold.</param>
+        /// <param name="silenceSeconds">The silence seconds.</param>
         private void RecordToFile(string fileName, int timeLimit, int silenceThreshold, int silenceSeconds)
         {
             Session.DtmfReceivedFunction = (c, t) => c == '#' ? "false" : "true";

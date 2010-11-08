@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{814D8764-8BE0-4A9C-865C-B7FBC001AA4F}</ProjectGuid>
+    <ProjectGuid>{8AB7F668-6C4E-491E-B199-02F5F4FF60E6}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>FreeSwitchUtilities</RootNamespace>
-    <AssemblyName>FreeSwitchUtilities</AssemblyName>
+    <RootNamespace>FreeSwitchUtilities.Samples</RootNamespace>
+    <AssemblyName>FreeSwitchUtilities.Samples</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -42,9 +42,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="VoiceQuestionnaireServiceSample.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Extensions\IvrExtensions.cs" />
-    <Compile Include="Irv\VoiceQuestionnaireService.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FreeSwitchUtilities\FreeSwitchUtilities.csproj">
+      <Project>{814D8764-8BE0-4A9C-865C-B7FBC001AA4F}</Project>
+      <Name>FreeSwitchUtilities</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
