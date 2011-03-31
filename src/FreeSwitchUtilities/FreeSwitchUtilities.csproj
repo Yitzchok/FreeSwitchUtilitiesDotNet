@@ -42,6 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Irv\HangupException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Extensions\IvrExtensions.cs" />
     <Compile Include="Irv\VoiceQuestionnaireService.cs" />

@@ -86,29 +86,35 @@ namespace FreeSwitchUtilities.Irv
                                            string question, string invalidInput, Func<string, string> isCorrectQuestion, string regexPattern,
                                            Func<string, bool> isValid)
         {
-
             CheckSessionReady();
             string result = PlayAndGetDigits(minDigits, maxDigits, tries, timeout, terminators, question,
                                              invalidInput, regexPattern);
 
             if (isValid(result))
             {
-                var isCorrectInput = AskToVerifyAnswer(invalidInput, result, isCorrectQuestion);
-
-                if (!isCorrectInput)
+                var isCorrectQuestionToAsk = isCorrectQuestion(result);
+                if (!string.IsNullOrEmpty(isCorrectQuestionToAsk))
                 {
-                    CheckSessionReady();
-                    result = AskAndVerifyQuestion(minDigits, maxDigits, tries, timeout, terminators,
-                                                  question, invalidInput, isCorrectQuestion, regexPattern, isValid);
+                    var isCorrectInput = AskToVerifyAnswer(invalidInput, isCorrectQuestionToAsk);
+
+                    if (!isCorrectInput)
+                    {
+                        CheckSessionReady();
+                        result = AskAndVerifyQuestion(minDigits, maxDigits, tries, timeout, terminators,
+                                                      question, invalidInput, isCorrectQuestion, regexPattern, isValid);
+                    }
                 }
             }
             else
             {
-                CheckSessionReady();
-                Session.StreamFile(invalidInput, 0);
+                if (!string.IsNullOrEmpty(invalidInput))
+                {
+                    CheckSessionReady();
+                    Session.StreamFile(invalidInput, 0);
+                }
                 CheckSessionReady();
                 result = AskAndVerifyQuestion(minDigits, maxDigits, tries - 1, timeout, terminators,
-                                              question, isCorrectQuestion, regexPattern, isValid);
+                                              question, invalidInput, isCorrectQuestion, regexPattern, isValid);
             }
 
             return result;
@@ -121,13 +127,12 @@ namespace FreeSwitchUtilities.Irv
         /// <param name="result">The result.</param>
         /// <param name="isCorrectQuestion">The is correct question.</param>
         /// <returns></returns>
-        private bool AskToVerifyAnswer(string invalidInput, string result, Func<string, string> isCorrectQuestion)
+        private bool AskToVerifyAnswer(string invalidInput, string isCorrectQuestion)
         {
             CheckSessionReady();
             var isCorrectInput = AskAndVerifyQuestion(1, 1, 3, 8000, "#",
-                                                      isCorrectQuestion(result), invalidInput, "[12]") == "1";
+                                                      isCorrectQuestion, invalidInput, "[12]") == "1";
             return isCorrectInput;
-
         }
 
         /// <summary>
@@ -186,12 +191,38 @@ namespace FreeSwitchUtilities.Irv
         public string PlayAndGetDigits(int minDigits, int maxDigits, int tries, int timeout, string terminators,
                                        string audioFile, string badInputAudioFile, string regexPattern)
         {
+            return PlayAndGetDigits(minDigits, maxDigits, tries, timeout, terminators,
+                                                            audioFile,
+                                                            badInputAudioFile, regexPattern, 5000);
+        }
+
+        /// <summary>
+        /// Plays the and get digits.
+        /// </summary>
+        /// <param name="minDigits">The min digits.</param>
+        /// <param name="maxDigits">The max digits.</param>
+        /// <param name="tries">The tries.</param>
+        /// <param name="timeout">The timeout.</param>
+        /// <param name="terminators">The terminators.</param>
+        /// <param name="audioFile">The audio file.</param>
+        /// <param name="badInputAudioFile">The bad input audio file.</param>
+        /// <param name="regexPattern">The regex pattern.</param>
+        /// <param name="digitTimeout">The timeout for each digit.</param>
+        /// <returns></returns>
+        public string PlayAndGetDigits(int minDigits, int maxDigits, int tries, int timeout, string terminators,
+                                       string audioFile, string badInputAudioFile, string regexPattern, int digitTimeout)
+        {
             CheckSessionReady();
 
-            return Session.PlayAndGetDigits(minDigits, maxDigits, tries, timeout, terminators,
-                                            PhraseStart + audioFile,
-                                            badInputAudioFile, regexPattern, String.Empty, 5000);
+            var digitsReturned = Session.PlayAndGetDigits(minDigits, maxDigits, tries, timeout, terminators,
+                                                            PhraseStart + audioFile,
+                                                            badInputAudioFile, regexPattern, String.Empty, digitTimeout);
+            if (string.IsNullOrEmpty(digitsReturned))
+                throw new MaxRetriesExceededException();
+
+            return digitsReturned;
         }
+
 
         /// <summary>
         /// Checks if session ready.
@@ -207,7 +238,7 @@ namespace FreeSwitchUtilities.Irv
         /// </summary>
         private void CheckSessionReady()
         {
-            if (!Session.Ready()) throw new Exception();
+            if (!Session.Ready()) throw new HangupException();
         }
 
         /// <summary>
@@ -269,8 +300,10 @@ namespace FreeSwitchUtilities.Irv
 
             RecordToFile(fileNameCombined, timeLimit, silenceThreshold, silenceHits);
 
+
+            var recordingCorrect = isCorrectQuestion(fileNameCombined);
             CheckSessionReady();
-            var isRecordingFine = AskToVerifyAnswer("invalid", fileNameCombined, isCorrectQuestion);
+            var isRecordingFine = AskToVerifyAnswer("invalid", recordingCorrect);
 
             if (!isRecordingFine)
             {
@@ -290,13 +323,14 @@ namespace FreeSwitchUtilities.Irv
         /// <param name="silenceSeconds">The silence seconds.</param>
         private void RecordToFile(string fileName, int timeLimit, int silenceThreshold, int silenceSeconds)
         {
-            Session.DtmfReceivedFunction = (c, t) => c == '#' ? "false" : "true";
+            Func<char, TimeSpan, string> receivedFunction = (c, t) => (c == '#') ? "break" : "";
+            Session.DtmfReceivedFunction += receivedFunction;
 
             CheckSessionReady();
             Session.RecordFile(fileName, timeLimit, silenceThreshold, silenceSeconds);
             CheckSessionReady();
 
-            Session.DtmfReceivedFunction = null;
+            Session.DtmfReceivedFunction -= receivedFunction;
         }
     }
 }
