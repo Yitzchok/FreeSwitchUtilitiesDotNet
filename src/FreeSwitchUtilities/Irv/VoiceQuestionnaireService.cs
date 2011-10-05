@@ -216,7 +216,8 @@ namespace FreeSwitchUtilities.Irv
 
             var digitsReturned = Session.PlayAndGetDigits(minDigits, maxDigits, tries, timeout, terminators,
                                                             PhraseStart + audioFile,
-                                                            badInputAudioFile, regexPattern, String.Empty, digitTimeout);
+                                                            badInputAudioFile, regexPattern, String.Empty, digitTimeout, null);
+            CheckSessionReady();
             if (string.IsNullOrEmpty(digitsReturned))
                 throw new MaxRetriesExceededException();
 
@@ -277,7 +278,7 @@ namespace FreeSwitchUtilities.Irv
         /// <returns></returns>
         public string AskRecordAndVerifyQuestion(string question, Func<string, string> isCorrectQuestion, string recordFileName, int timeLimit, int silenceHits)
         {
-            return AskRecordAndVerifyQuestion(question, isCorrectQuestion, recordFileName, timeLimit, 500, silenceHits);
+            return AskRecordAndVerifyQuestion(question, isCorrectQuestion, recordFileName, InvalidAudioFile, timeLimit, 500, silenceHits);
         }
 
         /// <summary>
@@ -291,7 +292,7 @@ namespace FreeSwitchUtilities.Irv
         /// <param name="silenceHits">The silence hits.</param>
         /// <returns></returns>
         public string AskRecordAndVerifyQuestion(string question, Func<string, string> isCorrectQuestion,
-            string recordFileName, int timeLimit, int silenceThreshold, int silenceHits)
+            string recordFileName, string invalidInput, int timeLimit, int silenceThreshold, int silenceHits)
         {
             var fileNameCombined = Path.Combine(RecordingFolder, recordFileName) + ".wav";
 
@@ -303,11 +304,11 @@ namespace FreeSwitchUtilities.Irv
 
             var recordingCorrect = isCorrectQuestion(fileNameCombined);
             CheckSessionReady();
-            var isRecordingFine = AskToVerifyAnswer("invalid", recordingCorrect);
+            var isRecordingFine = AskToVerifyAnswer(invalidInput, recordingCorrect);
 
             if (!isRecordingFine)
             {
-                fileNameCombined = AskRecordAndVerifyQuestion(question, isCorrectQuestion, recordFileName, timeLimit, silenceThreshold,
+                fileNameCombined = AskRecordAndVerifyQuestion(question, isCorrectQuestion, recordFileName, invalidInput, timeLimit, silenceThreshold,
                                            silenceHits);
             }
 
