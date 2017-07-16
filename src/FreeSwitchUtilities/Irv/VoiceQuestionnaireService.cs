@@ -61,7 +61,7 @@ namespace FreeSwitchUtilities.Irv
         /// <returns></returns>
         public string AskAndVerifyQuestion(int minDigits, int maxDigits, int tries, int timeout, string terminators,
                                            string question, Func<string, string> isCorrectQuestion, string regexPattern,
-                                           Func<string, bool> isValid)
+                                           Func<string, IsValidResult> isValid)
         {
             return AskAndVerifyQuestion(minDigits, maxDigits, tries, timeout, terminators, question, InvalidAudioFile, isCorrectQuestion,
                                  regexPattern, isValid);
@@ -84,13 +84,15 @@ namespace FreeSwitchUtilities.Irv
         /// <returns></returns>
         public string AskAndVerifyQuestion(int minDigits, int maxDigits, int tries, int timeout, string terminators,
                                            string question, string invalidInput, Func<string, string> isCorrectQuestion, string regexPattern,
-                                           Func<string, bool> isValid)
+                                           Func<string, IsValidResult> isValid)
         {
             CheckSessionReady();
             string result = PlayAndGetDigits(minDigits, maxDigits, tries, timeout, terminators, question,
                                              invalidInput, regexPattern);
 
-            if (isValid(result))
+            var isValidResult = isValid(result);
+
+            if (isValidResult.IsValid)
             {
                 var isCorrectQuestionToAsk = isCorrectQuestion(result);
                 if (!string.IsNullOrEmpty(isCorrectQuestionToAsk))
@@ -107,11 +109,20 @@ namespace FreeSwitchUtilities.Irv
             }
             else
             {
-                if (!string.IsNullOrEmpty(invalidInput))
+                if (string.IsNullOrEmpty(isValidResult.OverrideInput))
+                {
+                    if (!string.IsNullOrEmpty(invalidInput))
+                    {
+                        CheckSessionReady();
+                        Session.StreamFile(invalidInput, 0);
+                    }
+                }
+                else
                 {
                     CheckSessionReady();
-                    Session.StreamFile(invalidInput, 0);
+                    Session.StreamFile(isValidResult.OverrideInput, 0);
                 }
+
                 CheckSessionReady();
                 result = AskAndVerifyQuestion(minDigits, maxDigits, tries - 1, timeout, terminators,
                                               question, invalidInput, isCorrectQuestion, regexPattern, isValid);
