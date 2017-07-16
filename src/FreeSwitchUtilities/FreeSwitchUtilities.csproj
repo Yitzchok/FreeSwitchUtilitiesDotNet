@@ -44,11 +44,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Irv\HangupException.cs" />
-    <Compile Include="Irv\IsValidResult.cs" />
+    <Compile Include="Ivr\HangupException.cs" />
+    <Compile Include="Ivr\IsValidResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Extensions\IvrExtensions.cs" />
-    <Compile Include="Irv\VoiceQuestionnaireService.cs" />
+    <Compile Include="Ivr\VoiceQuestionnaireService.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

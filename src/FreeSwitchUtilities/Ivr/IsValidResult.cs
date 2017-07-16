@@ -1,4 +1,4 @@
-namespace FreeSwitchUtilities.Irv
+namespace FreeSwitchUtilities.Ivr
 {
     public class IsValidResult
     {
