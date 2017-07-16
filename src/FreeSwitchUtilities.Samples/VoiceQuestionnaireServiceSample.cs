@@ -5,6 +5,7 @@ using System.Text;
 using FreeSWITCH;
 using FreeSWITCH.Native;
 using FreeSwitchUtilities.Irv;
+using AppContext = FreeSWITCH.AppContext;
 
 namespace FreeSwitchUtilities.Samples
 {
