@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Threading;
 using FreeSWITCH.Native;
 
 namespace FreeSwitchUtilities.Ivr
@@ -29,6 +30,10 @@ namespace FreeSwitchUtilities.Ivr
         /// </summary>
         /// <value>The recording folder.</value>
         public string RecordingFolder { get; set; }
+
+        public int WaitBeforeTryingToVerify { get; set; }
+
+        public int DefaultDigitTimeout { get; set; } = 5000;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="VoiceQuestionnaireService"/> class.
@@ -89,6 +94,9 @@ namespace FreeSwitchUtilities.Ivr
             CheckSessionReady();
             string result = PlayAndGetDigits(minDigits, maxDigits, tries, timeout, terminators, question,
                                              invalidInput, regexPattern);
+
+            if (WaitBeforeTryingToVerify > 0)
+                Session.sleep(WaitBeforeTryingToVerify, 0);
 
             var isValidResult = isValid(result);
 
@@ -211,7 +219,7 @@ namespace FreeSwitchUtilities.Ivr
         {
             return PlayAndGetDigits(minDigits, maxDigits, tries, timeout, terminators,
                                                             audioFile,
-                                                            badInputAudioFile, regexPattern, 5000);
+                                                            badInputAudioFile, regexPattern, DefaultDigitTimeout);
         }
 
         /// <summary>
