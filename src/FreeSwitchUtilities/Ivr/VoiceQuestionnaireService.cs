@@ -35,6 +35,8 @@ namespace FreeSwitchUtilities.Ivr
 
         public int DefaultDigitTimeout { get; set; } = 5000;
 
+        public string VerifyAnswerInvalidInput { get; set; } = "";
+
         /// <summary>
         /// Initializes a new instance of the <see cref="VoiceQuestionnaireService"/> class.
         /// </summary>
@@ -105,7 +107,7 @@ namespace FreeSwitchUtilities.Ivr
                 var isCorrectQuestionToAsk = isCorrectQuestion(result);
                 if (!string.IsNullOrEmpty(isCorrectQuestionToAsk))
                 {
-                    var isCorrectInput = AskToVerifyAnswer(invalidInput, isCorrectQuestionToAsk);
+                    var isCorrectInput = AskToVerifyAnswer(isCorrectQuestionToAsk);
 
                     if (!isCorrectInput)
                     {
@@ -142,18 +144,17 @@ namespace FreeSwitchUtilities.Ivr
         /// <summary>
         /// Asks to verify answer.
         /// </summary>
-        /// <param name="invalidInput">The invalid input.</param>
-        /// <param name="result">The result.</param>
         /// <param name="isCorrectQuestion">The is correct question.</param>
+        /// <param name="invalidInput">The invalid input.</param>
         /// <returns></returns>
-        private bool AskToVerifyAnswer(string invalidInput, string isCorrectQuestion)
+        private bool AskToVerifyAnswer(string isCorrectQuestion, string invalidInput = null)
         {
             CheckSessionReady();
 
             try
             {
                 return AskAndVerifyQuestion(1, 1, 3, 8000, "#",
-                                         isCorrectQuestion, invalidInput, "[12]") == "1";
+                                         isCorrectQuestion, invalidInput ?? VerifyAnswerInvalidInput, "[12]") == "1";
             }
             catch (MaxRetriesExceededException)
             {
@@ -330,7 +331,7 @@ namespace FreeSwitchUtilities.Ivr
 
             var recordingCorrect = isCorrectQuestion(fileNameCombined);
             CheckSessionReady();
-            var isRecordingFine = AskToVerifyAnswer(invalidInput, recordingCorrect);
+            var isRecordingFine = AskToVerifyAnswer(recordingCorrect, invalidInput);
 
             if (!isRecordingFine)
             {
